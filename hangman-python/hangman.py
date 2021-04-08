@@ -88,6 +88,9 @@ def game():
     # Par défaut, autant de tirets qu'il y a de lettres dans le mot à deviner
     motDecouvert = "_" * longueurMotChoisi
     print(motDecouvert)
+    accents = {"A": "ÀÂÄ", "E": "ÉÈÊË", "I": "ÎÏ", "O": "ÔÖ", "U": "ÙÛÜ", "C": "Ç"}
+    # Ensemble des lettres proposées par le joueur
+    lettresProposees = set()
     # Indicateur si la partie en cours (on l'enclenche)
     partieEnCours = True
     # Tant que la partie est en cours
@@ -95,7 +98,22 @@ def game():
         # On saute des lignes pour l'affichage
         print()
         # On demande au joueur de saisir une lettre
-        lettreChoisie = input("Entrez une lettre : ").upper()
+        lettreChoisie = input("Entrez une lettre : ")
+        bonFormat = False
+        while (not bonFormat):
+            bonFormat = True
+            if lettreChoisie.isalpha():
+                lettreChoisie = lettreChoisie.upper()
+                for cle, groupe in accents.items():
+                    if lettreChoisie in groupe:
+                        lettreChoisie = cle
+                if lettreChoisie in lettresProposees:
+                    bonFormat = False
+                    lettreChoisie = input("Vous avez déjà proposé cette lettre, entrez-en une autre : ")
+            else:
+                bonFormat = False
+                lettreChoisie = input("Entrez une LETTRE : ")
+        lettresProposees.add(lettreChoisie)
         print()
         # Indicateur si la lettre est la bonne (par défaut non)
         lettreBonne = False
@@ -120,7 +138,7 @@ def game():
         # Sinon
         else:
             # On lui indique que la lettre n'est pas bonnes
-            print("Dommage, la lettre que vous avez saisie n'est pas présente dans le mot")
+            print(choice(["Dommage, la lettre que vous avez saisie n'est pas présente dans le mot", "Raté", "Non"]))
             # On lui retire un essai restant
             nbEssaisRestants -=1
             # et s'il ne lui reste plus d'essai
