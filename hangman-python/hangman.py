@@ -67,6 +67,7 @@ def initDessin():
 """]
 
 def initDico():
+    """ Initialise et retourne un dictionnaire à partir d'un fichier texte """
     fichier = open("Dico_jeu_pendu.txt")
     dico=[]
     for word in fichier:
@@ -74,6 +75,15 @@ def initDico():
     return dico
 
 def supprLong(dico, secret):
+    """ 
+    Supprime du dictionnaire les mots de même longueur que le mot mystère
+
+    Parameters:
+        dico (list): le dictionnaire actuel
+        secret (string): le mot mystère
+    Returns:
+        newDico (list): un nouveau dictionnaire avec les mots supprimés
+    """
     newDico = dico.copy()
     for word in dico:
         if len(word) != len(secret):
@@ -82,6 +92,15 @@ def supprLong(dico, secret):
     return newDico
 
 def supprLettre(dico, lettre):
+    """ 
+    Supprime du dictionnaire les mots qui possèdent la lettre donnée
+    
+    Parameters:
+        dico (list): le dictionnaire actuel
+        lettre (string): la lettre considérée
+    Returns:
+        newDico (list): un nouveau dictionnaire avec les mots supprimés
+    """
     newDico = dico.copy()
     for word in dico:
         if lettre in word:
@@ -89,6 +108,16 @@ def supprLettre(dico, lettre):
     return newDico
 
 def supprImpossible(dico, connu, lettre):
+    """ 
+    Supprime du dictionnaire les mots qui ne possèdent pas la même lettre aux mêmes emplacement que le mot connu
+    
+    Parameters:
+        dico (list): le dictionnaire actuel
+        connu (string): le mot avec les lettre actuellement découvertes par le joueur
+        lettre (string): la lettre considérée (la dernière lettre proposée)
+    Returns:
+        newDico (list): un nouveau dictionnaire avec les mots supprimés
+    """
     newDico = dico.copy()
     for word in dico:
         for ind, char in enumerate(connu):
@@ -103,11 +132,29 @@ def supprImpossible(dico, connu, lettre):
     return newDico
 
 def suggest(dico, connu):
+    """ 
+    Suggère une lettre parmi celles possibles 
+    
+    Parameters:
+        dico (list): le dictionnaire actuel
+        connu (string): le mot avec les lettre actuellement découvertes par le joueur
+    Returns:
+        char (string): la lettre suggérée
+    """
     for ind, char in enumerate(connu):
         if char == "_":
             return dico[0][ind]
 
 def best(dico, connu):
+    """ 
+    Suggère la meilleure lettre possible (statistiquement) parmi celles possibles 
+    
+    Parameters:
+        dico (list): le dictionnaire actuel
+        connu (string): le mot avec les lettre actuellement découvertes par le joueur
+    Returns:
+        char (string): la lettre suggérée
+    """
     occurences = {}
     for ind, caractere in enumerate(connu):
         if caractere == "_":
@@ -138,6 +185,7 @@ def game():
     # Par défaut, autant de tirets qu'il y a de lettres dans le mot à deviner
     motDecouvert = "_" * longueurMotChoisi
     print(motDecouvert)
+    # Dicionnaire des accents existants en français (avec la lettre non accntuée en clé)
     accents = {"A": "ÀÂÄ", "E": "ÉÈÊË", "I": "ÎÏ", "O": "ÔÖ", "U": "ÙÛÜ", "C": "Ç"}
     # Ensemble des lettres proposées par le joueur
     lettresProposees = set()
@@ -149,27 +197,37 @@ def game():
         print()
         # On demande au joueur de saisir une lettre
         lettreChoisie = input("Entrez une lettre (help ou aide pour obtenir la suggestion de l'ordinateur) : ")
+        # indicateur du respect du format entré par le joueur (par défaut non)
         bonFormat = False
+        # Tant que ce n'est pas le bon format
         while (not bonFormat):
-            bonFormat = True
+            # Si le joueur a tapé une lettre (ou des lettres)
             if lettreChoisie.isalpha():
+                # On met sa saisie en majuscules
                 lettreChoisie = lettreChoisie.upper()
+                # S'il n'a tapé qu'une lettre
                 if (len(lettreChoisie) == 1):
+                    # On regarde si la lettre est accentuée en parcourant le dictionnaire
                     for cle, groupe in accents.items():
                         if lettreChoisie in groupe:
+                            # On la remplace dans ce cas par la lettre non accentuée
                             lettreChoisie = cle
+                    # Si la lettre tapée est dans les lettres proposées
                     if lettreChoisie in lettresProposees:
-                        bonFormat = False
+                        # On demande au joueur de saisir une autre lettre
                         lettreChoisie = input("Vous avez déjà proposé cette lettre, entrez-en une autre : ")
                     # Sinon tout est bon et on peut passer à la suite
+                    else:
+                        bonFormat = True
+                # S'il a tapé aide ou help
                 elif lettreChoisie == "AIDE" or lettreChoisie == "HELP":
+                    # On lui suggère la meilleure possibilité
                     lettreChoisie = best(dico, motDecouvert)
+                    # En le lui indiquant
                     print("Choix de l'ordinateur : ", lettreChoisie)
                 else:
-                    bonFormat = False
                     lettreChoisie = input("Entrez une seule lettre : ")
             else:
-                bonFormat = False
                 lettreChoisie = input("Entrez une LETTRE : ")
         lettresProposees.add(lettreChoisie)
         print(lettresProposees)
