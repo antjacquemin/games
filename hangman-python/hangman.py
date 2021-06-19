@@ -69,7 +69,7 @@ def initDessin():
 def initDico():
     """ Initialise et retourne un dictionnaire à partir d'un fichier texte """
     fichier = open("Dico_jeu_pendu.txt")
-    dico=[]
+    dico = []
     for word in fichier:
         dico.append(word.replace("\n", ""))
     return dico
@@ -175,17 +175,17 @@ def game():
     print(initDessin()[nbEssaisMax - nbEssaisRestants])
     dico = initDico()
     # Choix au hasard du mot dans le dictionnaire
-    motChoisi = choice(initDico())
+    motChoisi = choice(dico)
     # Récupération de la longueur de mot (pour des soucis de performance)
     longueurMotChoisi = len(motChoisi)
-    print(len(dico))
+    #print(len(dico))
     dico = supprLong(dico, motChoisi) # TODO Englober dans decorator
-    print(len(dico))
+    #print(len(dico))
     # Mot avec les lettres trouvées par le joueur et des _ sinon
     # Par défaut, autant de tirets qu'il y a de lettres dans le mot à deviner
     motDecouvert = "_" * longueurMotChoisi
     print(motDecouvert)
-    # Dicionnaire des accents existants en français (avec la lettre non accntuée en clé)
+    # Dicionnaire des accents existants en français (avec la lettre non accentuée en clé)
     accents = {"A": "ÀÂÄ", "E": "ÉÈÊË", "I": "ÎÏ", "O": "ÔÖ", "U": "ÙÛÜ", "C": "Ç"}
     # Ensemble des lettres proposées par le joueur
     lettresProposees = set()
@@ -230,7 +230,7 @@ def game():
             else:
                 lettreChoisie = input("Entrez une LETTRE : ")
         lettresProposees.add(lettreChoisie)
-        print(lettresProposees)
+        #print(lettresProposees)
         print()
         # Indicateur si la lettre est la bonne (par défaut non)
         lettreBonne = False
@@ -244,12 +244,12 @@ def game():
                 lettreBonne = True     
         # Si le joueur a tapé la bonne lettre
         if lettreBonne:
-            print(len(dico))
+            #print(len(dico))
             dico = supprImpossible(dico, motDecouvert, lettreChoisie)
             # On le félicite
             print(choice(["Oui","C'est bon","Cette lettre y est","Bien joué"])) #"Vous avez trouvé une bonne lettre")
-            print(len(dico))
-            print(dico)
+            #print(len(dico))
+            #print(dico)
             # S'il n'y a plus de tiret dans le mot partiel découvert
             if ("_" not in motDecouvert):
                 # Alors le mot a été trouvé entièrement 
@@ -258,12 +258,12 @@ def game():
                 partieEnCours = False
         # Sinon
         else:
-            print(len(dico))
+            #print(len(dico))
             dico = supprLettre(dico, lettreChoisie)
             # On lui indique que la lettre n'est pas bonnes
             print(choice(["Dommage, la lettre que vous avez saisie n'est pas présente dans le mot", "Raté", "Non"]))
-            print(len(dico))
-            print(dico)
+            #print(len(dico))
+            #print(dico)
             # On lui retire un essai restant
             nbEssaisRestants -=1
             # et s'il ne lui reste plus d'essai
