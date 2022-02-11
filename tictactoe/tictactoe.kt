@@ -45,8 +45,7 @@ fun main() {
                     println("This cell is occupied! Choose another one!")
                 else
                     validInput = true
-            }
-            
+            } 
         }
         grid[cellNumber] = player
         turn++
